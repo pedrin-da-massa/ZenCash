@@ -1,12 +1,19 @@
+
 using Microsoft.EntityFrameworkCore;
 using ZenCash.Api.Data;
+using ZenCash.Api.Repositories;
+using ZenCash.Api.Repositories.Interfaces;
+using ZenCash.Api.Services;
+using ZenCash.Api.Services.Interfaces;
+using ZenCash.Api.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Conexão com o MySQL
+// Conexão com MySQL
 var connectionString = builder.Configuration
     .GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException(
@@ -20,8 +27,15 @@ builder.Services.AddDbContext<ZenCashContext>(options =>
     )
 );
 
+// Injeção de dependência: Repositórios
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+
+// Injeção de dependência: Serviços
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+
 var app = builder.Build();
 
+// Swagger
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -30,7 +44,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Rota para testar o banco
+// Teste de conexão com o banco
 app.MapGet("/db-status", async (ZenCashContext db) =>
 {
     var conectado = await db.Database.CanConnectAsync();
@@ -39,5 +53,5 @@ app.MapGet("/db-status", async (ZenCashContext db) =>
         ? Results.Ok("ZenCash conectado ao MySQL!")
         : Results.Problem("Falha na conexão com o MySQL.");
 });
-
+app.MapUsuarioEndpoints();
 app.Run();
