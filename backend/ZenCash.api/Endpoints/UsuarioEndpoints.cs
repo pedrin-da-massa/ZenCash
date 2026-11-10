@@ -1,4 +1,5 @@
 
+using ZenCash.Api.DTOs;
 using ZenCash.Api.Services.Interfaces;
 
 namespace ZenCash.Api.Endpoints;
@@ -30,12 +31,34 @@ public static class UsuarioEndpoints
             }
             catch (ArgumentException ex)
             {
-                return Results.BadRequest(new { mensagem = ex.Message });
+                return Results.BadRequest(
+                    new { mensagem = ex.Message }
+                );
             }
             catch (InvalidOperationException ex)
             {
-                return Results.Conflict(new { mensagem = ex.Message });
+                return Results.Conflict(
+                    new { mensagem = ex.Message }
+                );
             }
+        });
+
+        // Login do usuário
+        grupo.MapPost("/login", async (
+            LoginUsuarioRequest request,
+            IUsuarioService service) =>
+        {
+            var resultado = await service.LoginAsync(
+                request.Email,
+                request.Senha
+            );
+
+            if (resultado == null)
+            {
+                return Results.Unauthorized();
+            }
+
+            return Results.Ok(resultado);
         });
 
         // Buscar usuário por ID
@@ -46,7 +69,9 @@ public static class UsuarioEndpoints
             var usuario = await service.BuscarPorIdAsync(id);
 
             return usuario == null
-                ? Results.NotFound(new { mensagem = "Usuário não encontrado." })
+                ? Results.NotFound(
+                    new { mensagem = "Usuário não encontrado." }
+                )
                 : Results.Ok(usuario);
         });
     }
