@@ -1,0 +1,6 @@
+@ZenCash.Api_HostAddress = http://localhost:5114
+
+GET {{ZenCash.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
