@@ -7,7 +7,7 @@
 **/secrets.json
 .env
 .env.*
-
+/backend/ZenCash.api/appsettings.Development.json
 # IDE
 .vs/
 .vscode/
