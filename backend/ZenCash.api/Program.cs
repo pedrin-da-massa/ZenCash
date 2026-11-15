@@ -172,11 +172,13 @@ builder.Services.AddDbContext<ZenCashContext>(options =>
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<ITransacaoRepository, TransacaoRepository>();
 builder.Services.AddScoped<IMetaRepository, MetaRepository>();
+builder.Services.AddScoped<IContaRepository, ContaRepository>();
 
 // Injeção de dependência (DI): Serviços
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<ITransacaoService, TransacaoService>();
 builder.Services.AddScoped<IMetaService, MetaService>();
+builder.Services.AddScoped<IContaService, ContaService>();
 
 var app = builder.Build();
 
@@ -206,5 +208,6 @@ app.MapGet("/db-status", async (ZenCashContext db) =>
 app.MapUsuarioEndpoints();
 app.MapTransacaoEndpoints();
 app.MapMetaEndpoints();
-
+app.MapContaEndpoints();
+Console.WriteLine("ENDPOINTS DE CONTAS REGISTRADOS!");
 app.Run();
